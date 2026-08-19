@@ -36,6 +36,9 @@ export default function UserManagementPage() {
   const [saving, setSaving] = useState(null);
   const [savingApproval, setSavingApproval] = useState(null);
   const [ownerConfirm, setOwnerConfirm] = useState(null); // { userId, currentRole }
+  const [deleteConfirm, setDeleteConfirm] = useState(null); // { user }
+  const [deleting, setDeleting] = useState(false);
+  const [statusMsg, setStatusMsg] = useState(null); // { type: 'success'|'error', text }
   const currentUser = getItems(STORAGE_KEYS.logged_user);
 
   async function load() {
@@ -163,6 +166,31 @@ export default function UserManagementPage() {
     });
   }
 
+  async function handleDelete(user) {
+    setDeleting(true);
+    setStatusMsg(null);
+    try {
+      await userRepository.delete(user.id, currentUser.id);
+
+      await auditRepository.create({
+        user_id: currentUser.id,
+        action: 'delete',
+        entity_type: 'user',
+        entity_id: user.id,
+        before: { ...user },
+        after: null,
+      });
+
+      setDeleteConfirm(null);
+      setStatusMsg({ type: 'success', text: `User "${user.username}" was deleted successfully.` });
+      await load();
+    } catch (err) {
+      setStatusMsg({ type: 'error', text: err.message || 'Failed to delete user.' });
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   async function handleApprovalToggle(userId) {
     const user = users.find((u) => u.id === userId);
     if (!user) return;
@@ -197,6 +225,11 @@ export default function UserManagementPage() {
         subtitle={`${users.length} registered user${users.length !== 1 ? 's' : ''}`}
       />
       <div className="px-8 py-6">
+        {statusMsg && (
+          <div className={`mb-4 px-4 py-3 rounded text-[13px] font-medium ${statusMsg.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+            {statusMsg.text}
+          </div>
+        )}
         {users.length === 0 ? (
           <p className="text-[13px] text-[#737373]">No registered users yet.</p>
         ) : (
@@ -209,6 +242,7 @@ export default function UserManagementPage() {
                 <Th>Current Role</Th>
                 <Th>Change Role</Th>
                 <Th>Approval</Th>
+                <Th></Th>
                 <Th></Th>
               </tr>
             </Thead>
@@ -267,6 +301,17 @@ export default function UserManagementPage() {
                         </div>
                       )}
                     </Td>
+                    <Td>
+                      {String(u.id) !== String(currentUser?.id) && (
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => { setStatusMsg(null); setDeleteConfirm({ user: u }); }}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </Td>
                   </Tr>
                 );
               })}
@@ -274,6 +319,35 @@ export default function UserManagementPage() {
           </Table>
         )}
       </div>
+
+      <Modal
+        open={!!deleteConfirm}
+        onClose={() => !deleting && setDeleteConfirm(null)}
+        title="Delete User"
+        size="sm"
+        footer={
+          <>
+            <Button onClick={() => setDeleteConfirm(null)} disabled={deleting}>Cancel</Button>
+            <Button
+              variant="danger"
+              loading={deleting}
+              onClick={() => handleDelete(deleteConfirm.user)}
+            >
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <p className="text-[13px] text-[#0a0a0a] mb-3">
+          Are you sure you want to delete <strong>{deleteConfirm?.user?.name || deleteConfirm?.user?.username}</strong>?
+        </p>
+        <p className="text-[13px] text-[#737373]">
+          Username: <strong>{deleteConfirm?.user?.username}</strong> · Email: {deleteConfirm?.user?.email || '—'}
+        </p>
+        <p className="text-[13px] text-[#737373] mt-2">
+          This action cannot be undone.
+        </p>
+      </Modal>
 
       <Modal
         open={!!ownerConfirm}

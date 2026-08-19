@@ -40,7 +40,7 @@ export default function SpamPage() {
   }, []);
 
   const permission = getPermission();
-  if (permission < 4) return null;
+  if (permission < 3) return null;
 
   async function loadAll() {
     const suppliers = await supplierRepository.getAll();

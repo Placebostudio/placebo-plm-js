@@ -18,8 +18,8 @@ export const userRepository = {
         return await apiRequest('users', 'update', id, data);
     },
 
-    async delete(id) {
-        return await apiRequest('users', 'delete', id);
+    async delete(id, requesterId) {
+        return await apiRequest('users', 'delete', id, { requester_id: requesterId });
     },
 
     async login(username, password) {

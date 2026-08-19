@@ -339,6 +339,8 @@ const tableRequest = async (
         options.body = JSON.stringify(body);
     }
 
+    console.log("API URL:", url);
+    console.log("BASE URL:", BASE_URL);
 
     return await handleResponse(
         await fetch(url, options)

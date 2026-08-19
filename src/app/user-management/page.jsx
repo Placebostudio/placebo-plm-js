@@ -17,7 +17,7 @@ const ROLE_OPTIONS = [
   { value: 'viewer', label: 'Viewer' },
   { value: 'supplier', label: 'Supplier' },
   { value: 'editor', label: 'Editor' },
-  { value: 'admin', label: 'Manager' },
+  { value: 'manager', label: 'Manager' },
   { value: 'owner', label: 'Owner' },
 ];
 
@@ -25,7 +25,7 @@ const ROLE_LABELS = {
   viewer: 'Viewer',
   supplier: 'Supplier',
   editor: 'Editor',
-  admin: 'Manager',
+  manager: 'Manager',
   owner: 'Owner',
 };
 

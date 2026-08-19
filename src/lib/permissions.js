@@ -11,7 +11,7 @@ const ROLE_PERMISSIONS = {
     viewer: 0,
     supplier: 1,
     editor: 2,
-    admin: 3,
+    manager: 3,
     owner: 4
 };
 

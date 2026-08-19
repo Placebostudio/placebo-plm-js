@@ -683,7 +683,7 @@ export default function SupplierDetailPage({ params }) {
 
                     <span className="text-[13px]">
                       {m.unit_cost != null
-                        ? `€${m.unit_cost} / ${m.unit_of_measurement}`
+                        ? `€${m.unit_cost} / ${m.unit_of_measure}`
                         : '—'}
                     </span>
                   </div>

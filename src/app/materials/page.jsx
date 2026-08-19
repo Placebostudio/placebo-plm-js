@@ -20,7 +20,7 @@ const BLANK = {
   color: '',
   description: '',
   supplier_id: '',
-  unit_of_measurement: '',
+  unit_of_measure: '',
   unit_cost: '',
   currency: 'EUR',
   minimum_order_quantity: '',
@@ -114,8 +114,8 @@ export default function MaterialsPage() {
       errs.currency = 'Currency is required';
     }
 
-    if (!form.unit_of_measurement?.trim()) {
-      errs.unit_of_measurement =
+    if (!form.unit_of_measure?.trim()) {
+      errs.unit_of_measure =
         'Unit of measurement is required';
     }
 
@@ -133,7 +133,7 @@ export default function MaterialsPage() {
     const material = {
       ...form,
       supplier_id: form.supplier_id || null,
-      unit_of_measure: form.unit_of_measurement,
+      unit_of_measure: form.unit_of_measure,
       unit_cost:
         form.unit_cost !== ''
           ? Number(form.unit_cost)
@@ -187,7 +187,7 @@ export default function MaterialsPage() {
       <Td>{m.color || '—'}</Td>
       <Td>{supplierName(m.supplier_id)}</Td>
       <Td>{m.unit_cost != null ? `€${m.unit_cost}` : '—'}</Td>
-      <Td>{m.unit_of_measurement || '—'}</Td>
+      <Td>{m.unit_of_measure || '—'}</Td>
       <Td><StatusBadge status={m.status} /></Td>
     </Tr>
   );
@@ -335,9 +335,9 @@ export default function MaterialsPage() {
           )}
           <Select
             label="Unit of Measurement"
-            value={form.unit_of_measurement}
-            error={errors.unit_of_measurement}
-            onChange={(e) => set('unit_of_measurement', e.target.value)}
+            value={form.unit_of_measure}
+            error={errors.unit_of_measure}
+            onChange={(e) => set('unit_of_measure', e.target.value)}
           >
             <option value="">Select unit</option>
             <option value="m">m</option>

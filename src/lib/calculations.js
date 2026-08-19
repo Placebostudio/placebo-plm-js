@@ -68,7 +68,7 @@ export function calculateRequiredMaterials({ orderLines, products, bomLines, mat
   return Array.from(aggregated.values()).map(({ material, total_quantity, products: prods }) => {
     const warnings = [];
     if (!material.supplier_id) warnings.push('No supplier assigned');
-    if (!material.unit_of_measurement) warnings.push('No unit of measurement');
+    if (!material.unit_of_measure) warnings.push('No unit of measurement');
     if (material.unit_cost === null || material.unit_cost === undefined)
       warnings.push('No unit cost');
 

@@ -402,7 +402,7 @@ export default function MaterialDetailPage({ params }) {
                       ))}
                     </Select>
                   )}
-                  <Input label="Unit of Measurement" value={form.unit_of_measurement || ''} error={errors.unit_of_measurement} onChange={(e) => set('unit_of_measurement', e.target.value)} />
+                  <Input label="Unit of Measurement" value={form.unit_of_measure || ''} error={errors.unit_of_measure} onChange={(e) => set('unit_of_measure', e.target.value)} />
                   <Input label="Min. Order Qty" type="number" value={form.minimum_order_quantity ?? ''} error={errors.minimum_order_quantity} onChange={(e) => set('minimum_order_quantity', e.target.value)} />
                   <Textarea label="Description" value={form.description || ''} onChange={(e) => set('description', e.target.value)} className="col-span-2" />
                   <Textarea label="Notes" value={form.notes || ''} onChange={(e) => set('notes', e.target.value)} className="col-span-2" />
@@ -414,7 +414,7 @@ export default function MaterialDetailPage({ params }) {
                   <Field label="Supplier" value={supplierName} />
                   <Field label="Unit Cost" value={material.unit_cost != null ? `€${material.unit_cost}` : null} />
                   <Field label="Currency" value={material.currency} />
-                  <Field label="Unit of Measurement" value={material.unit_of_measurement} />
+                  <Field label="Unit of Measurement" value={material.unit_of_measure} />
                   <Field label="Min. Order Qty" value={material.minimum_order_quantity} />
                   {material.description && <Field label="Description" value={material.description} className="col-span-2" />}
                   {material.notes && <Field label="Notes" value={material.notes} className="col-span-2" />}
@@ -452,7 +452,7 @@ export default function MaterialDetailPage({ params }) {
                     </div>
 
                     <span className="text-[13px] text-[#737373]">
-                      {quantity_per_unit} {material.unit_of_measurement} / unit
+                      {quantity_per_unit} {material.unit_of_measure} / unit
                     </span>
                   </div>
                 ))}

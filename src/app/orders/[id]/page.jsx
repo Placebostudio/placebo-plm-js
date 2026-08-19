@@ -810,7 +810,7 @@ export default function OrderDetailPage({ params }) {
                       <Td>{rm.material.category}</Td>
                       <Td>{rm.material.supplier?.name ?? <span className="text-amber-600">—</span>}</Td>
                       <Td>{rm.total_quantity}</Td>
-                      <Td>{rm.material.unit_of_measurement}</Td>
+                      <Td>{rm.material.unit_of_measure}</Td>
                       <Td>{rm.unit_cost != null ? fmtMoney(rm.unit_cost) : '—'}</Td>
                       <Td>{rm.estimated_cost != null ? fmtMoney(rm.estimated_cost) : '—'}</Td>
                       <Td>{rm.allocated_shipping != null ? fmtMoney(rm.allocated_shipping) : '—'}</Td>
@@ -867,7 +867,7 @@ export default function OrderDetailPage({ params }) {
                             <Td className="font-medium">{rm.material.name}</Td>
                             <Td>{rm.material.category}</Td>
                             <Td>{rm.total_quantity}</Td>
-                            <Td>{rm.material.unit_of_measurement}</Td>
+                            <Td>{rm.material.unit_of_measure}</Td>
                             <Td>{rm.estimated_cost != null ? fmtMoney(rm.estimated_cost) : '—'}</Td>
                             <Td>{fmtMoney(rm.allocated_shipping ?? 0)}</Td>
                             <Td>{fmtMoney(rm.allocated_customs ?? 0)}</Td>

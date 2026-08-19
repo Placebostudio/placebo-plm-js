@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5173/api";
+const BASE_URL = "https://placebo-plm-js-backend-1.onrender.com/api";
 
 
 // =========================

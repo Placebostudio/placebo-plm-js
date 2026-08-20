@@ -1,4 +1,4 @@
-import { apiRequest } from './aws-storage';
+import { apiRequest } from './backend-request-communicator';
 
 /**
  * Load all available FX rates from the backend.

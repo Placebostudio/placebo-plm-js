@@ -1,4 +1,4 @@
-import { apiRequest } from './aws-storage.js';
+import { apiRequest } from './backend-request-communicator.js';
 
 export const auditRepository = {
 

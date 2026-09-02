@@ -1,36 +1,148 @@
-import { apiRequest } from './backend-request-communicator.js';
+import { STORAGE_KEYS } from "../constants";
 
-export const userRepository = {
+const BASE_URL = "https://placebo-plm-js-backend-1.onrender.com/api";
+
+const currentUser = getItems(STORAGE_KEYS.logged_user);
+
+const userRepository = {
 
     async getAll() {
-        return await apiRequest('users', 'get');
+
+        const response = await fetch(
+            `${BASE_URL}/users?user_id=${encodeURIComponent(currentUser.id)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to get users");
+        }
+
+        return data;
     },
 
     async getById(id) {
-        return await apiRequest('users', 'get', id);
+
+        const response = await fetch(
+            `${BASE_URL}/users/${id}?user_id=${encodeURIComponent(currentUser.id)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to get user");
+        }
+
+        return data;
     },
 
     async create(data) {
-        return await apiRequest('users', 'add', null, data);
+
+        const response = await fetch(
+            `${BASE_URL}/users`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ...data,
+                    user_id: currentUser.id
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Failed to create user"
+            );
+        }
+
+        return result;
     },
 
     async update(id, data) {
-        return await apiRequest('users', 'update', id, data);
+
+        const response = await fetch(
+            `${BASE_URL}/users/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ...data,
+                    user_id: currentUser.id
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Failed to update user"
+            );
+        }
+
+        return result;
     },
 
     async delete(id, requesterId) {
-        return await apiRequest('users', 'delete', id, { requester_id: requesterId });
+
+        const response = await fetch(
+            `${BASE_URL}/users/${id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    requester_id: requesterId,
+                    user_id: currentUser.id
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Failed to delete user"
+            );
+        }
+
+        return result;
     },
 
     async login(username, password) {
-        return await apiRequest(
-            'users/login',
-            'add',
-            null,
+
+        const response = await fetch(
+            `${BASE_URL}/users/login`,
             {
-                username,
-                password
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username,
+                    password
+                })
             }
         );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Login failed"
+            );
+        }
+
+        return result;
     }
 };
+
+export default userRepository;

@@ -45,10 +45,7 @@ const userRepository = {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    ...data,
-                    user_id: currentUser.id
-                })
+                body: JSON.stringify(data)
             }
         );
 

@@ -1,6 +1,7 @@
 import { STORAGE_KEYS } from "../constants";
+import { getItems } from "./storage";
 
-const BASE_URL = "https://placebo-plm-js-backend-1.onrender.com/api";
+const BASE_URL = "https://placebo-plm-js-backend.onrender.com/api";
 
 const currentUser = getItems(STORAGE_KEYS.logged_user);
 
@@ -125,4 +126,4 @@ const bomLineRepository = {
     }
 };
 
-export default bomLineRepository;
+export {bomLineRepository};

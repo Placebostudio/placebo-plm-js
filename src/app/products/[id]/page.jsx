@@ -7,6 +7,13 @@ import {
   Modal, Warning, Tabs, Table, Thead, Tbody, Th, Td, Tr, EmptyState,
   formatCurrency, Badge,
 } from '@/components/ui';
+import { calculateBOMCost, calculateProductCostSummary } from '@/lib/calculations';
+import { MATERIAL_CATEGORY_GROUPS, PRODUCT_CATEGORIES, STORAGE_KEYS } from '@/lib/constants';
+import { initializePermission, getPermission } from "../../../lib/permissions";
+import { getItems } from '@/lib/data/storage';
+import { loadCurrencies } from '@/lib/data/currency';
+import { ProductImageUpload, attemptImageUpload } from '@/components/product-image-upload';
+
 import { productRepository } from '@/lib/data/backend-products.js';
 import { materialRepository } from '@/lib/data/backend-materials.js';
 import { bomLineRepository } from '@/lib/data/backend-bom_lines';
@@ -14,12 +21,7 @@ import { supplierRepository } from '@/lib/data/suppliers';
 import { orderRepository, orderLineRepository } from '@/lib/data/orders';
 import { attachmentRepository } from '@/lib/data/backend-attachment';
 import { auditRepository } from '@/lib/data/backend-audit.js';
-import { calculateBOMCost, calculateProductCostSummary } from '@/lib/calculations';
-import { MATERIAL_CATEGORY_GROUPS, PRODUCT_CATEGORIES, STORAGE_KEYS } from '@/lib/constants';
-import { initializePermission, getPermission } from "../../../lib/permissions";
-import { getItems } from '@/lib/data/storage';
-import { loadCurrencies } from '@/lib/data/currency';
-import { ProductImageUpload, attemptImageUpload } from '@/components/product-image-upload';
+import { skuRepository } from '@/lib/data/backend-sku';
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
@@ -50,6 +52,7 @@ export default function ProductDetailPage({ params }) {
   const [errors, setErrors] = useState({});
   const [currencies, setCurrencies] = useState([]);
   const [pendingImageFile, setPendingImageFile] = useState(null);
+  const [skuOptions, setSKUOptions] = useState([]);
   const currentUser = getItems(STORAGE_KEYS.logged_user);
 
   async function load() {
@@ -195,6 +198,28 @@ export default function ProductDetailPage({ params }) {
     load();
   }
 
+  let skuFilterTimeout;
+
+  const handleSKUInput = (e) => {
+
+    const value = e.target.value;
+
+    set('sku', value);
+
+    clearTimeout(skuFilterTimeout);
+
+    skuFilterTimeout = setTimeout(() => {
+
+      skuRepository.filterSKUs(value);
+
+      // use the new filtered list here
+      setSKUOptions([
+        ...skuRepository.filteredSKUS
+      ]);
+
+    }, 100);
+  }
+
   async function handleStatusChange(status) {
     const updatedProduct = {
       ...product,
@@ -246,7 +271,7 @@ export default function ProductDetailPage({ params }) {
     const newProduct = await productRepository.create({
       name: `${product.name} Copy`,
       style_code: `${product.style_code} Copy`,
-      sku: `${product.sku} Copy`,
+      sku: `${product.sku}`,
       category: product.category || 'outerwear',
       season: product.season || '',
       colors: product.colors ? [...product.colors] : [],
@@ -370,13 +395,16 @@ export default function ProductDetailPage({ params }) {
     }
 
     if (!form.sku?.trim()) {
+
       errs.sku = 'SKU is required';
+
     } else if (
       all.some(
         (p) => p.id !== id && p.sku === form.sku
       )
     ) {
-      errs.sku = 'SKU must be unique';
+      errs.sku =
+        '2 identical SKUs may cause an issue, are you sure you want to proceed?';
     }
 
     return errs;
@@ -562,7 +590,18 @@ export default function ProductDetailPage({ params }) {
                   <div className="grid grid-cols-2 gap-4">
                     <Input label="Product Name" value={form.name || ''} error={errors.name} onChange={(e) => set('name', e.target.value)} className="col-span-2" />
                     <Input label="Style Code" value={form.style_code || ''} error={errors.style_code} onChange={(e) => set('style_code', e.target.value)} />
-                    <Input label="SKU" value={form.sku || ''} error={errors.sku} onChange={(e) => set('sku', e.target.value)} />
+                    <Input
+                      label="SKU"
+                      value={form.sku || ''}
+                      error={errors.sku}
+                      onChange={(e) => {
+                        const value = e.target.value;
+
+                        set('sku', value);
+
+                        filterSKUOptions(value);
+                      }}
+                    />
                     <Select label="Season" value={form.season} error={errors.season} onChange={(e) => set('season', e.target.value)}>
                       <option value="">Select season</option>
                       <option value="fall_winter">Fall / Winter</option>

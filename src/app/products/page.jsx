@@ -14,6 +14,7 @@ import { initializePermission, getPermission } from "../../lib/permissions";
 import { getItems } from '@/lib/data/storage';
 import { loadCurrencies } from '@/lib/data/currency';
 import { ProductImageUpload, attemptImageUpload } from '@/components/product-image-upload';
+import { skuRepository } from '@/lib/data/backend-sku';
 
 const BLANK = {
   name: '',
@@ -44,6 +45,7 @@ export default function ProductsPage() {
   const [errors, setErrors] = useState({});
   const [currencies, setCurrencies] = useState([]);
   const [pendingImageFile, setPendingImageFile] = useState(null);
+  const [skuOptions, setSKUOptions] = useState([]);
 
   async function load() {
     initializePermission();
@@ -52,6 +54,47 @@ export default function ProductsPage() {
   }
 
   useEffect(() => {
+    async function doit() {
+
+        try {
+
+            const result =
+                await skuRepository.getAll();
+
+            console.log(
+                "SKU API result:",
+                result
+            );
+
+            console.log(
+                "SKU template:",
+                skuRepository.template
+            );
+
+            console.log(
+                "ALL SKUS:",
+                skuRepository.allSKUS
+            );
+
+            console.log(
+                "ALL SKUS LENGTH:",
+                skuRepository.allSKUS.length
+            );
+
+            console.log(
+                "FILTERED SKUS:",
+                skuRepository.filteredSKUS
+            );
+
+        } catch (err) {
+
+            console.error(
+                "SKU getAll failed:",
+                err
+            );
+        }
+    }
+    doit()
     load();
     loadCurrencies()
       .then(setCurrencies)
@@ -78,10 +121,40 @@ export default function ProductsPage() {
     setModal(true);
   }
 
+  let skuFilterTimeout;
+
+  const handleSKUInput = (e) => {
+
+    const value = e.target.value;
+
+    set('sku', value);
+
+    clearTimeout(skuFilterTimeout);
+
+    skuFilterTimeout = setTimeout(() => {
+
+      skuRepository.filterSKUs(value);
+
+      console.log(
+        "Filtered SKUs:",
+        skuRepository.filteredSKUS
+      );
+
+      // use the new filtered list here
+      setSKUOptions([
+        ...skuRepository.filteredSKUS
+      ]);
+
+    }, 100);
+  }
+
   async function validate() {
     const errs = {};
     const all = await productRepository.getAll();
-    if (!form.name.trim()) errs.name = 'Name is required';
+
+    if (!form.name.trim()) {
+      errs.name = 'Name is required';
+    }
 
     if (!form.selling_price || Number(form.selling_price) <= 0) {
       errs.selling_price = 'Selling price must be greater than 0';
@@ -99,6 +172,8 @@ export default function ProductsPage() {
 
     if (!form.sku.trim()) {
       errs.sku = 'SKU is required';
+    } else if (!skuRepository.skuFitsTemplate(form.sku)) {
+      errs.sku = 'SKU does not match the required format';
     } else if (all.some((p) => p.sku === form.sku)) {
       errs.sku = 'SKU must be unique';
     }
@@ -296,7 +371,32 @@ export default function ProductsPage() {
         <div className="grid grid-cols-2 gap-4">
           <Input label="Product Name *" value={form.name} onChange={(e) => set('name', e.target.value)} error={errors.name} className="col-span-2" />
           <Input label="Style Code *" value={form.style_code} onChange={(e) => set('style_code', e.target.value)} error={errors.style_code} />
-          <Input label="SKU *" value={form.sku} onChange={(e) => set('sku', e.target.value)} error={errors.sku} />
+          <div className="relative">
+            <Input
+              label="SKU *"
+              value={form.sku || ''}
+              onChange={handleSKUInput}
+              error={errors.sku}
+            />
+
+            {skuOptions.length > 0 && (
+              <div className="absolute z-10 w-full bg-white border rounded-md shadow-md">
+                {skuOptions.map((sku) => (
+                  <button
+                    key={sku}
+                    type="button"
+                    className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+                    onClick={() => {
+                      set('sku', sku);
+                      setSKUOptions([]);
+                    }}
+                  >
+                    {sku}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <Select label="Season" value={form.season} error={errors.season} onChange={(e) => set('season', e.target.value)}>
             <option value="">Select season</option>
             <option value="fall_winter">Fall / Winter</option>

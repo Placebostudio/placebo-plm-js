@@ -179,7 +179,7 @@ export async function attemptImageUpload(file, { entityType = 'product', entityI
   if (uploadedBy) formData.append('uploaded_by', uploadedBy);
   formData.append('file', file);
 
-  const response = await fetch('https://placebo-plm-js-backend-1.onrender.com/api/attachments', {
+  const response = await fetch('https://placebo-plm-js-backend.onrender.com/api/attachments', {
     method: 'POST',
     body: formData,
   });

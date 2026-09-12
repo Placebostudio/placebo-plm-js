@@ -9,19 +9,39 @@ const materialRepository = {
 
     async getAll(filters = {}) {
 
-        const params = new URLSearchParams({
-            ...filters,
-            user_id: currentUser.id
-        });
+        const params = new URLSearchParams();
+
+        Object.entries(filters).forEach(
+            ([key, value]) => {
+
+                if (
+                    value !== undefined &&
+                    value !== null &&
+                    value !== ""
+                ) {
+                    params.append(
+                        key,
+                        String(value)
+                    );
+                }
+            }
+        );
+
+        params.set(
+            "user_id",
+            currentUser.id
+        );
 
         const response = await fetch(
-            `${BASE_URL}/materials?${params}`
+            `${BASE_URL}/materials?${params.toString()}`
         );
 
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || "Failed to get materials");
+            throw new Error(
+                data.error || "Failed to get materials"
+            );
         }
 
         return data;
@@ -274,4 +294,4 @@ const materialRepository = {
     }
 };
 
-export {materialRepository};
+export { materialRepository };

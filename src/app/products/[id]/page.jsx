@@ -590,18 +590,32 @@ export default function ProductDetailPage({ params }) {
                   <div className="grid grid-cols-2 gap-4">
                     <Input label="Product Name" value={form.name || ''} error={errors.name} onChange={(e) => set('name', e.target.value)} className="col-span-2" />
                     <Input label="Style Code" value={form.style_code || ''} error={errors.style_code} onChange={(e) => set('style_code', e.target.value)} />
-                    <Input
-                      label="SKU"
-                      value={form.sku || ''}
-                      error={errors.sku}
-                      onChange={(e) => {
-                        const value = e.target.value;
+                    <div className="relative">
+                      <Input
+                        label="SKU *"
+                        value={form.sku || ''}
+                        onChange={handleSKUInput}
+                        error={errors.sku}
+                      />
 
-                        set('sku', value);
-
-                        filterSKUOptions(value);
-                      }}
-                    />
+                      {skuOptions.length > 0 && (
+                        <div className="absolute z-10 w-full bg-white border rounded-md shadow-md max-h-60 overflow-y-auto">
+                          {skuOptions.map((sku) => (
+                            <button
+                              key={sku}
+                              type="button"
+                              className="block w-full text-left px-3 py-2 hover:bg-gray-100"
+                              onClick={() => {
+                                set('sku', sku);
+                                setSKUOptions([]);
+                              }}
+                            >
+                              {sku}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <Select label="Season" value={form.season} error={errors.season} onChange={(e) => set('season', e.target.value)}>
                       <option value="">Select season</option>
                       <option value="fall_winter">Fall / Winter</option>

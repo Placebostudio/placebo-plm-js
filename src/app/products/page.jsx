@@ -56,43 +56,43 @@ export default function ProductsPage() {
   useEffect(() => {
     async function doit() {
 
-        try {
+      try {
 
-            const result =
-                await skuRepository.getAll();
+        const result =
+          await skuRepository.getAll();
 
-            console.log(
-                "SKU API result:",
-                result
-            );
+        // console.log(
+        //     "SKU API result:",
+        //     result
+        // );
 
-            console.log(
-                "SKU template:",
-                skuRepository.template
-            );
+        // console.log(
+        //     "SKU template:",
+        //     skuRepository.template
+        // );
 
-            console.log(
-                "ALL SKUS:",
-                skuRepository.allSKUS
-            );
+        // console.log(
+        //     "ALL SKUS:",
+        //     skuRepository.allSKUS
+        // );
 
-            console.log(
-                "ALL SKUS LENGTH:",
-                skuRepository.allSKUS.length
-            );
+        // console.log(
+        //     "ALL SKUS LENGTH:",
+        //     skuRepository.allSKUS.length
+        // );
 
-            console.log(
-                "FILTERED SKUS:",
-                skuRepository.filteredSKUS
-            );
+        // console.log(
+        //     "FILTERED SKUS:",
+        //     skuRepository.filteredSKUS
+        // );
 
-        } catch (err) {
+      } catch (err) {
 
-            console.error(
-                "SKU getAll failed:",
-                err
-            );
-        }
+        console.error(
+          "SKU getAll failed:",
+          err
+        );
+      }
     }
     doit()
     load();
@@ -380,7 +380,7 @@ export default function ProductsPage() {
             />
 
             {skuOptions.length > 0 && (
-              <div className="absolute z-10 w-full bg-white border rounded-md shadow-md">
+              <div className="absolute z-10 w-full bg-white border rounded-md shadow-md max-h-60 overflow-y-auto">
                 {skuOptions.map((sku) => (
                   <button
                     key={sku}

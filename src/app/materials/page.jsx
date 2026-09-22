@@ -47,8 +47,8 @@ export default function MaterialsPage() {
   async function load() {
     try {
       const [allMaterials, allSuppliers] = await Promise.all([
-        materialRepository.getAll(),
-        supplierRepository.getAll()
+        materialRepository.getAll({spam: false}),
+        supplierRepository.getAll({spam: false})
       ]);
 
       setMaterials(allMaterials);

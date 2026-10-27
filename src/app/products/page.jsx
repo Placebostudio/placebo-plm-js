@@ -409,17 +409,20 @@ export default function ProductsPage() {
           {currencies.length === 0 ? (
             <Input
               label="Currency"
-              value={form.currency || 'EUR'}
+              value={form.currency ?? 'EUR'}
               onChange={(e) => set('currency', e.target.value)}
             />
           ) : (
             <Select
               label="Currency"
-              value={form.currency || 'EUR'}
+              value={form.currency ?? 'EUR'}
               onChange={(e) => set('currency', e.target.value)}
             >
               {currencies.map((currency) => (
-                <option key={currency.quote} value={currency.quote}>
+                <option
+                  key={currency.quote}
+                  value={currency.quote}
+                >
                   {currency.quote}
                 </option>
               ))}

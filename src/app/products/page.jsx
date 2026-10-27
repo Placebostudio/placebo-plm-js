@@ -349,7 +349,14 @@ export default function ProductsPage() {
                   <Td>{p.sku}</Td>
                   <Td>{p.season || '—'}</Td>
                   <Td>{p.category}</Td>
-                  <Td>{p.selling_price != null ? `€${p.selling_price}` : '—'}</Td>
+                  <Td>
+                    {p.selling_price != null
+                      ? new Intl.NumberFormat('en', {
+                        style: 'currency',
+                        currency: p.currency || 'EUR',
+                      }).format(p.selling_price)
+                      : '—'}
+                  </Td>
                   <Td><StatusBadge status={p.status} /></Td>
                 </Tr>
               ))}

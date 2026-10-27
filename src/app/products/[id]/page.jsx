@@ -762,8 +762,23 @@ export default function ProductDetailPage({ params }) {
                               <Td>{mat.supplier_id ? supplierName : <span className="text-[#a3a3a3]">—</span>}</Td>
                               <Td>{line.quantity_per_unit}</Td>
                               <Td>{mat.unit_of_measure}</Td>
-                              <Td>{mat.unit_cost != null ? `€${mat.unit_cost}` : <span className="text-amber-600">⚠ Missing</span>}</Td>
-                              <Td>{lineCost != null ? `€${lineCost}` : '—'}</Td>
+                              <Td>
+                                {mat.unit_cost != null
+                                  ? new Intl.NumberFormat('en', {
+                                    style: 'currency',
+                                    currency: mat.currency || 'EUR',
+                                  }).format(mat.unit_cost)
+                                  : <span className="text-amber-600">⚠ Missing</span>}
+                              </Td>
+
+                              <Td>
+                                {lineCost != null
+                                  ? new Intl.NumberFormat('en', {
+                                    style: 'currency',
+                                    currency: mat.currency || 'EUR',
+                                  }).format(lineCost)
+                                  : '—'}
+                              </Td>
                               <Td className="text-[#737373]">{line.notes || '—'}</Td>
                               <Td>
                                 <div className="flex gap-1">

@@ -412,7 +412,17 @@ export default function MaterialDetailPage({ params }) {
                   <Field label="Category" value={material.category} />
                   <Field label="Color" value={material.color} />
                   <Field label="Supplier" value={supplierName} />
-                  <Field label="Unit Cost" value={material.unit_cost != null ? `€${material.unit_cost}` : null} />
+                  <Field
+                    label="Unit Cost"
+                    value={
+                      material.unit_cost != null
+                        ? new Intl.NumberFormat('en', {
+                          style: 'currency',
+                          currency: material.currency || 'EUR',
+                        }).format(material.unit_cost)
+                        : null
+                    }
+                  />
                   <Field label="Currency" value={material.currency} />
                   <Field label="Unit of Measurement" value={material.unit_of_measure} />
                   <Field label="Min. Order Qty" value={material.minimum_order_quantity} />

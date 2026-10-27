@@ -47,8 +47,8 @@ export default function MaterialsPage() {
   async function load() {
     try {
       const [allMaterials, allSuppliers] = await Promise.all([
-        materialRepository.getAll({spam: false}),
-        supplierRepository.getAll({spam: false})
+        materialRepository.getAll({ spam: false }),
+        supplierRepository.getAll({ spam: false })
       ]);
 
       setMaterials(allMaterials);
@@ -186,7 +186,14 @@ export default function MaterialsPage() {
       <Td>{m.category}</Td>
       <Td>{m.color || '—'}</Td>
       <Td>{supplierName(m.supplier_id)}</Td>
-      <Td>{m.unit_cost != null ? `€${m.unit_cost}` : '—'}</Td>
+      <Td>
+        {m.unit_cost != null
+          ? new Intl.NumberFormat('en', {
+            style: 'currency',
+            currency: m.currency || 'EUR',
+          }).format(m.unit_cost)
+          : '—'}
+      </Td>
       <Td>{m.unit_of_measure || '—'}</Td>
       <Td><StatusBadge status={m.status} /></Td>
     </Tr>

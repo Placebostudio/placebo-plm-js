@@ -1,8 +1,12 @@
 import * as XLSX from 'xlsx';
 
-function fmt(n) {
-  if (n == null) return '';
-  return Math.round(n * 100) / 100;
+function fmt(n, currency = 'EUR') {
+    if (n == null) return '—';
+
+    return new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency,
+    }).format(n);
 }
 
 /**

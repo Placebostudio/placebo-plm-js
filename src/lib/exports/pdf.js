@@ -1,9 +1,13 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-function fmt(n) {
-  if (n == null) return '—';
-  return `€${(Math.round(n * 100) / 100).toFixed(2)}`;
+function fmt(n, currency = 'EUR') {
+    if (n == null) return '—';
+
+    return new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency,
+    }).format(n);
 }
 
 /**

@@ -5,13 +5,14 @@ import React from 'react';
 // ─── Utility ──────────────────────────────────────────────────────────────────
 
 export function formatCurrency(amount, currency = 'EUR') {
-  if (amount == null || isNaN(amount)) return '—';
-  return new Intl.NumberFormat('en-DE', {
+  if (amount == null || !Number.isFinite(Number(amount))) return '—';
+
+  return new Intl.NumberFormat('en', {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(amount);
+  }).format(Number(amount));
 }
 
 export function formatDate(dateStr) {

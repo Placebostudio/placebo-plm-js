@@ -175,7 +175,8 @@ export default function ProductsPage() {
     } else if (!skuRepository.skuFitsTemplate(form.sku)) {
       errs.sku = 'SKU does not match the required format';
     } else if (all.some((p) => p.sku === form.sku)) {
-      errs.sku = 'SKU must be unique';
+      errs.sku =
+        '2 identical SKUs may cause an issue, are you sure you want to proceed?';
     }
 
     return errs;

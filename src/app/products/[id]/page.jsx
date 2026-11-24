@@ -54,6 +54,7 @@ export default function ProductDetailPage({ params }) {
   const [pendingImageFile, setPendingImageFile] = useState(null);
   const [skuOptions, setSKUOptions] = useState([]);
   const currentUser = getItems(STORAGE_KEYS.logged_user);
+  let skuWarning;
 
   async function load() {
     const p = await productRepository.getById(id);
@@ -394,18 +395,19 @@ export default function ProductDetailPage({ params }) {
       errs.style_code = 'Style code must be unique';
     }
 
-    if (!form.sku?.trim()) {
-
+    if (!form.sku.trim()) {
       errs.sku = 'SKU is required';
-
-    } else if (
-      all.some(
-        (p) => p.id !== id && p.sku === form.sku
-      )
-    ) {
-      errs.sku =
-        '2 identical SKUs may cause an issue, are you sure you want to proceed?';
+    } else if (!skuRepository.skuFitsTemplate(form.sku)) {
+      errs.sku = 'SKU does not match the required format';
     }
+
+    skuWarning = all.some(
+      (p) => p.sku === form.sku && form.sku.trim()
+    )
+      ? '2 identical SKUs may cause an issue, are you sure you want to proceed?'
+      : '';
+
+    return errs;
 
     return errs;
   }
@@ -596,6 +598,7 @@ export default function ProductDetailPage({ params }) {
                         value={form.sku || ''}
                         onChange={handleSKUInput}
                         error={errors.sku}
+                        warning={skuWarning}
                       />
 
                       {skuOptions.length > 0 && (

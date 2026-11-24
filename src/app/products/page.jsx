@@ -46,6 +46,7 @@ export default function ProductsPage() {
   const [currencies, setCurrencies] = useState([]);
   const [pendingImageFile, setPendingImageFile] = useState(null);
   const [skuOptions, setSKUOptions] = useState([]);
+  let skuWarning;
 
   async function load() {
     initializePermission();
@@ -174,10 +175,13 @@ export default function ProductsPage() {
       errs.sku = 'SKU is required';
     } else if (!skuRepository.skuFitsTemplate(form.sku)) {
       errs.sku = 'SKU does not match the required format';
-    } else if (all.some((p) => p.sku === form.sku)) {
-      errs.sku =
-        '2 identical SKUs may cause an issue, are you sure you want to proceed?';
     }
+
+    skuWarning = all.some(
+      (p) => p.sku === form.sku && form.sku.trim()
+    )
+      ? '2 identical SKUs may cause an issue, are you sure you want to proceed?'
+      : '';
 
     return errs;
   }
@@ -385,6 +389,7 @@ export default function ProductsPage() {
               value={form.sku || ''}
               onChange={handleSKUInput}
               error={errors.sku}
+              warning={skuWarning}
             />
 
             {skuOptions.length > 0 && (
